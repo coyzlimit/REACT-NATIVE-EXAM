@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, CheckBox, Switch, Alert} from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, CheckBox, Switch, Alert, AsyncStorage} from 'react-native';
 
 import Layout from '../constants/Layout';
 import Colors from '../constants/Colors';
@@ -13,6 +13,11 @@ export class LoginForm extends React.Component{
     emailError: '',
     passwordError: ''
   };
+
+  constructor(){
+    super();
+    this.getSavedUser();
+  }
 
   render() {
 
@@ -84,19 +89,36 @@ export class LoginForm extends React.Component{
   }
 
   handleSignIn = () => {
-    console.log(this.state)
+    if(this.state.remember){
+      AsyncStorage.setItem("user", JSON.stringify( this.state ))
+    }else{
+      AsyncStorage.removeItem("user")
+    }
+
     Alert.alert(
       'Alert',
       'Successfully Login!',
       [
         {text: 'Okay', onPress: () => this.clearFields() }
       ],
-      { cancelable: true }
-    );
+      { cancelable: false }
+    )
+    console.log(this.state);
+  }
+
+  getSavedUser = async () => {
+    try{
+      let user = await AsyncStorage.getItem("user");
+       if (user !== null) {
+         this.setState( JSON.parse(user) );
+       }
+    }catch(error){
+      console.log(error);
+    }
   }
 
   clearFields = () => {
-    if( this.state.remember === false ){
+    if(!this.state.remember){
       const state = {...this.state};
       state.emailError = '';
       state.email = '';

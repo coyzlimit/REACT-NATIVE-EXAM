@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, StyleSheet, View} from 'react-native';
+import { Image, Platform, StyleSheet, View, ScrollView} from 'react-native';
 
 import {LoginForm} from '../components/LoginForm';
 
